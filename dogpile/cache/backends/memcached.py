@@ -607,6 +607,7 @@ class PyMemcacheBackend(GenericMemcachedBackend):
         self.hashclient_retry_timeout = arguments.get(
             "hashclient_retry_timeout", 1
         )
+        self.ignore_exc = arguments.get("ignore_exc", False)
         self.dead_timeout = arguments.get("hashclient_dead_timeout", 60)
         if (
             self.retry_delay is not None
@@ -634,6 +635,7 @@ class PyMemcacheBackend(GenericMemcachedBackend):
             "retry_attempts": self.hashclient_retry_attempts,
             "retry_timeout": self.hashclient_retry_timeout,
             "dead_timeout": self.dead_timeout,
+            "ignore_exc": self.ignore_exc
         }
         if self.socket_keepalive is not None:
             _kwargs.update({"socket_keepalive": self.socket_keepalive})

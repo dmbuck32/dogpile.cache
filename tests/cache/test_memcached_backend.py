@@ -393,6 +393,23 @@ class PyMemcacheArgsTest:
                 [mock.call("foo", "bar", expire=20)],
             )
 
+    def test_pymemcache_hashclient_ignore_exc(self):
+        config_args = {"url": "127.0.0.1:11211","ignore_exc": True}
+        with self._mock_pymemcache_fixture():
+            backend = MockPyMemcacheBackend(config_args)
+            is_(backend._create_client(), self.hash_client())
+            eq_(
+                self.hash_client.mock_calls[0],
+                mock.call(
+                    ["127.0.0.1:11211"],
+                    serde=self.pickle_serde,
+                    default_noreply=False,
+                    tls_context=None,
+                    dead_timeout=60,
+                    ignore_exc=True,
+                ),
+            )
+            eq_(self.retrying_client.mock_calls, [])
 
 class MemcachedTest(_NonDistributedMemcachedTestSuite):
     backend = "dogpile.cache.memcached"
