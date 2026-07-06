@@ -18,7 +18,6 @@ from ..api import CacheBackend
 from ..api import NO_VALUE
 from ... import util
 
-
 if typing.TYPE_CHECKING:
     import bmemcached
     import memcache
@@ -587,6 +586,12 @@ class PyMemcacheBackend(GenericMemcachedBackend):
 
      .. versionadded:: 1.3.3
 
+    :param ignore_exc: optional bool, True to cause the "get", "gets",
+     "get_many" and "gets_many" calls to treat any errors as cache misses.
+     Defaults to False.
+
+     .. versionadded:: 1.5.1
+
     """  # noqa E501
 
     def __init__(self, arguments):
@@ -607,8 +612,8 @@ class PyMemcacheBackend(GenericMemcachedBackend):
         self.hashclient_retry_timeout = arguments.get(
             "hashclient_retry_timeout", 1
         )
-        self.ignore_exc = arguments.get("ignore_exc", False)
         self.dead_timeout = arguments.get("hashclient_dead_timeout", 60)
+        self.ignore_exc = arguments.get("ignore_exc", False)
         if (
             self.retry_delay is not None
             or self.retry_attempts is not None
@@ -635,7 +640,7 @@ class PyMemcacheBackend(GenericMemcachedBackend):
             "retry_attempts": self.hashclient_retry_attempts,
             "retry_timeout": self.hashclient_retry_timeout,
             "dead_timeout": self.dead_timeout,
-            "ignore_exc": self.ignore_exc
+            "ignore_exc": self.ignore_exc,
         }
         if self.socket_keepalive is not None:
             _kwargs.update({"socket_keepalive": self.socket_keepalive})

@@ -292,6 +292,7 @@ class PyMemcacheArgsTest:
                     retry_attempts=4,
                     retry_timeout=1,
                     dead_timeout=60,
+                    ignore_exc=False,
                 ),
             )
             eq_(self.retrying_client.mock_calls, [])
@@ -311,6 +312,7 @@ class PyMemcacheArgsTest:
                     retry_attempts=2,
                     retry_timeout=4,
                     dead_timeout=60,
+                    ignore_exc=False,
                 ),
             )
             eq_(self.retrying_client.mock_calls, [])
@@ -335,6 +337,7 @@ class PyMemcacheArgsTest:
                     retry_attempts=2,
                     retry_timeout=4,
                     dead_timeout=60,
+                    ignore_exc=False,
                 ),
             )
             eq_(
@@ -364,6 +367,7 @@ class PyMemcacheArgsTest:
                         retry_attempts=2,
                         retry_timeout=1,
                         dead_timeout=4,
+                        ignore_exc=False,
                     )
                 ],
             )
@@ -394,7 +398,7 @@ class PyMemcacheArgsTest:
             )
 
     def test_pymemcache_hashclient_ignore_exc(self):
-        config_args = {"url": "127.0.0.1:11211","ignore_exc": True}
+        config_args = {"url": "127.0.0.1:11211", "ignore_exc": True}
         with self._mock_pymemcache_fixture():
             backend = MockPyMemcacheBackend(config_args)
             is_(backend._create_client(), self.hash_client())
@@ -405,11 +409,14 @@ class PyMemcacheArgsTest:
                     serde=self.pickle_serde,
                     default_noreply=False,
                     tls_context=None,
+                    retry_attempts=2,
+                    retry_timeout=1,
                     dead_timeout=60,
                     ignore_exc=True,
                 ),
             )
             eq_(self.retrying_client.mock_calls, [])
+
 
 class MemcachedTest(_NonDistributedMemcachedTestSuite):
     backend = "dogpile.cache.memcached"
